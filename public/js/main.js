@@ -1,23 +1,37 @@
 function onSubmit(e) {
   e.preventDefault();
 
+  showAlert('This alert will disappear in 5 seconds', 5000);
+
   document.querySelector('.msg').textContent = '';
   document.querySelector('#image').src = '';
 
   const prompt = document.querySelector('#prompt').value;
-  const size = document.querySelector('#size').value;
 
   if (prompt === '') {
     alert('Please add some text');
     return;
   }
 
-  generateImageRequest(prompt, size);
+  generateImageRequest(prompt);
 }
 
-async function generateImageRequest(prompt, size) {
+function showAlert(message, duration) {
+  const alertBox = document.createElement('div');
+  alertBox.textContent = message;
+  alertBox.classList.add('alert');
+
+  document.body.appendChild(alertBox);
+
+  setTimeout(() => {
+    alertBox.remove();
+  }, duration);
+}
+
+
+
+async function generateImageRequest(prompt) {
   try {
-    showSpinner();
 
     const response = await fetch('/openai/generateimage', {
       method: 'POST',
@@ -26,12 +40,10 @@ async function generateImageRequest(prompt, size) {
       },
       body: JSON.stringify({
         prompt,
-        size,
       }),
     });
 
     if (!response.ok) {
-      removeSpinner();
       throw new Error('That image could not be generated');
     }
 
@@ -41,19 +53,9 @@ async function generateImageRequest(prompt, size) {
     const imageUrl = data.data;
 
     document.querySelector('#image').src = imageUrl;
-
-    removeSpinner();
   } catch (error) {
     document.querySelector('.msg').textContent = error;
   }
-}
-
-function showSpinner() {
-  document.querySelector('.spinner').classList.add('show');
-}
-
-function removeSpinner() {
-  document.querySelector('.spinner').classList.remove('show');
 }
 
 document.querySelector('#image-form').addEventListener('submit', onSubmit);

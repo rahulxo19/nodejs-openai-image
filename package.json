@@ -8,7 +8,7 @@
     "dev": "nodemon index"
   },
   "keywords": [],
-  "author": "Brad Traversy",
+  "author": "",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.0.3",
